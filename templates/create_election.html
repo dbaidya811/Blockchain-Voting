@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Election</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .center-box { min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #23272a 60%, #4fc3f7 100%); }
+        .card { background: #23272a; border-radius: 24px; box-shadow: 0 8px 32px #000a; padding: 2.5rem 2rem 2rem 2rem; max-width: 420px; width: 100%; animation: fadeIn 0.7s; }
+        .card h1 { color: #ffb347; font-size: 2rem; text-align: center; margin-bottom: 1.2rem; }
+        .input-group { margin-bottom: 1.3rem; }
+        .input-group label { color: #4fc3f7; font-size: 1.05rem; margin-bottom: 0.3rem; display: block; }
+        .input-group input, .input-group textarea { width: 100%; border-radius: 12px; border: none; background: #181a1b; color: #f1f1f1; font-size: 1.08rem; padding: 0.8rem; margin-top: 0.2rem; box-shadow: 0 2px 8px #0002; }
+        .input-group input:focus, .input-group textarea:focus { outline: 2px solid #4fc3f7; background: #23272a; }
+        .create-btn { width: 100%; background: linear-gradient(90deg, #4fc3f7, #ffb347); color: #181a1b; border: none; padding: 0.9rem 0; border-radius: 14px; font-size: 1.13rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; transition: background 0.3s, color 0.2s, box-shadow 0.2s; box-shadow: 0 2px 8px #0003; }
+        .create-btn:hover { background: linear-gradient(90deg, #ffb347, #4fc3f7); color: #23272a; box-shadow: 0 0 16px #4fc3f7; }
+        .back-link { text-align: center; margin-top: 2rem; }
+        .flash { text-align: center; margin-bottom: 1rem; color: #ffb347; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="center-box">
+        <form class="card" method="post" enctype="multipart/form-data">
+            <h1><i class="fa-solid fa-plus"></i> Create Election</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="flash">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            <div class="input-group">
+                <label for="name">Election Name</label>
+                <input type="text" id="name" name="name" required maxlength="60" placeholder="Election title">
+            </div>
+            <div class="input-group">
+                <label for="event_image">Event Image</label>
+                <input type="file" id="event_image" name="event_image" accept="image/*">
+            </div>
+            <div class="input-group">
+                <label for="start_time">Start Date & Time</label>
+                <input type="datetime-local" id="start_time" name="start_time" required>
+            </div>
+            <div class="input-group">
+                <label for="end_time">End Date & Time</label>
+                <input type="datetime-local" id="end_time" name="end_time" required>
+            </div>
+            <div class="input-group">
+                <label>Competitors</label>
+                <div id="competitors-list"></div>
+                <button type="button" id="add-competitor" style="margin-top:0.7rem; background:#4fc3f7; color:#23272a; border:none; border-radius:10px; padding:0.5rem 1.2rem; font-weight:600; cursor:pointer;">+ Add Competitor</button>
+            </div>
+            <input class="create-btn" type="submit" value="Create Election">
+            <div class="back-link"><a href="/dashboard">Back to Dashboard</a></div>
+        </form>
+    </div>
+    <script>
+    let competitorCount = 0;
+    function createCompetitorField(idx) {
+        return `<div class='competitor-row' style='display:flex;align-items:center;gap:0.5rem;margin-bottom:0.7rem;'>
+            <input type='text' name='competitor_name_${idx}' placeholder='Name' required style='flex:2; border-radius:8px; padding:0.5rem;'>
+            <input type='file' name='competitor_img_${idx}' accept='image/*' style='flex:2;'>
+            <button type='button' onclick='removeCompetitor(this)' style='background:#ffb347;color:#23272a;border:none;border-radius:8px;padding:0.4rem 0.7rem;font-weight:600;cursor:pointer;'>Remove</button>
+        </div>`;
+    }
+    function addCompetitor() {
+        competitorCount++;
+        const list = document.getElementById('competitors-list');
+        list.insertAdjacentHTML('beforeend', createCompetitorField(competitorCount));
+    }
+    function removeCompetitor(btn) {
+        btn.parentElement.remove();
+    }
+    document.getElementById('add-competitor').onclick = addCompetitor;
+    // Add two competitors by default
+    window.onload = function() {
+        addCompetitor();
+        addCompetitor();
+    };
+    </script>
+</body>
+</html> 

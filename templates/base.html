@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <title>Base</title>
+</head>
+<body>
+    <div id="loader-overlay">
+      <div class="loader-spinner"></div>
+    </div>
+    {% block content %}{% endblock %}
+    <script>
+    function showLoader() {
+      document.getElementById('loader-overlay').style.display = 'flex';
+    }
+    function hideLoader() {
+      document.getElementById('loader-overlay').style.display = 'none';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show loader on all form submits
+      document.querySelectorAll('form').forEach(function(form) {
+        form.addEventListener('submit', function() {
+          showLoader();
+        });
+      });
+      // Show loader on all buttons with data-loader attribute
+      document.querySelectorAll('button[data-loader]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          showLoader();
+        });
+      });
+    });
+    </script>
+</body>
+</html> 

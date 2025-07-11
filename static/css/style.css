@@ -1,0 +1,173 @@
+body {
+    background: #181a1b;
+    color: #f1f1f1;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3 {
+    color: #ffb347;
+    letter-spacing: 1px;
+}
+
+a {
+    color: #4fc3f7;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: #ffb347;
+    text-shadow: 0 0 5px #4fc3f7;
+}
+
+form {
+    background: #23272a;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 16px #0008;
+    max-width: 350px;
+    margin: 2rem auto;
+    animation: fadeIn 0.7s;
+}
+
+input[type="text"], input[type="email"], input[type="password"], select {
+    width: 100%;
+    padding: 0.7rem;
+    margin: 0.5rem 0 1rem 0;
+    border: none;
+    border-radius: 5px;
+    background: #181a1b;
+    color: #f1f1f1;
+    font-size: 1rem;
+    box-shadow: 0 1px 4px #0004;
+    transition: box-shadow 0.2s;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
+    outline: none;
+    box-shadow: 0 0 8px #4fc3f7;
+}
+
+input[type="submit"] {
+    background: linear-gradient(90deg, #4fc3f7, #ffb347);
+    color: #181a1b;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, color 0.2s;
+    box-shadow: 0 2px 8px #0006;
+}
+
+input[type="submit"]:hover {
+    background: linear-gradient(90deg, #ffb347, #4fc3f7);
+    color: #23272a;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card style for dashboard */
+.card {
+    background: #23272a;
+    border-radius: 10px;
+    box-shadow: 0 2px 16px #0008;
+    padding: 1.5rem;
+    margin: 1rem auto;
+    max-width: 500px;
+    animation: fadeIn 0.7s;
+}
+
+/* Button style */
+.button {
+    background: #4fc3f7;
+    color: #181a1b;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0.5rem 0;
+    transition: background 0.3s, color 0.2s;
+}
+
+.button:hover {
+    background: #ffb347;
+    color: #23272a;
+    box-shadow: 0 0 8px #4fc3f7;
+}
+
+@media (max-width: 600px) {
+    html, body {
+        width: 100vw;
+        overflow-x: hidden;
+    }
+    .card, form, .dashboard-card {
+        padding: 0.7rem 0.3rem 1.2rem 0.3rem !important;
+        max-width: 99vw !important;
+        min-width: 0 !important;
+        border-radius: 10px !important;
+        box-sizing: border-box;
+    }
+    .center-box, .dashboard-container {
+        padding: 0 !important;
+    }
+    h1, h2, h3 {
+        font-size: 1.2rem !important;
+    }
+    input, button, select, textarea {
+        font-size: 1rem !important;
+    }
+    .button, input[type="submit"] {
+        font-size: 1rem !important;
+        padding: 0.7rem 0 !important;
+        border-radius: 10px !important;
+    }
+    .login-btn, .dashboard-btn, .vote-btn, .download-btn {
+        font-size: 1rem !important;
+        padding: 0.7rem 0 !important;
+        border-radius: 10px !important;
+    }
+    .forgot-link, .login-footer, .dashboard-footer, .back-link {
+        font-size: 0.98rem !important;
+    }
+    .voters-scroll-box, .option-list, .results, .receipt-box, .voter-row {
+        font-size: 0.98rem !important;
+    }
+}
+
+/* MetaMask-style Loader Overlay */
+#loader-overlay {
+    position: fixed;
+    z-index: 9999;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(30,32,36,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+.loader-spinner {
+    width: 64px;
+    height: 64px;
+    border: 7px solid #f3f3f3;
+    border-top: 7px solid #ffb347;
+    border-right: 7px solid #4fc3f7;
+    border-bottom: 7px solid #ffb347;
+    border-left: 7px solid #4fc3f7;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    background: transparent;
+    box-shadow: 0 0 24px #4fc3f7, 0 0 12px #ffb347 inset;
+}
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+} 
