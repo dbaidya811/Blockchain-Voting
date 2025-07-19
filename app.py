@@ -20,14 +20,14 @@ GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
 if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
     raise RuntimeError("Google OAuth credentials not set in environment variables.")
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
-REDIRECT_URI = "http://localhost:5000/auth/google/callback"
+REDIRECT_URI = "http://voting-system-kd9y.onrender.com/auth/google/callback"
 
 FACEBOOK_CLIENT_ID = "1053147023660486"
 FACEBOOK_CLIENT_SECRET = "b29262386d08c2cb4779d158502427c8"
 FACEBOOK_AUTHORIZATION_BASE_URL = "https://www.facebook.com/v17.0/dialog/oauth"
 FACEBOOK_TOKEN_URL = "https://graph.facebook.com/v17.0/oauth/access_token"
 FACEBOOK_USERINFO_URL = "https://graph.facebook.com/me?fields=id,name,email"
-FACEBOOK_REDIRECT_URI = "http://localhost:5000/auth/facebook/callback"
+FACEBOOK_REDIRECT_URI = "http://voting-system-kd9y.onrender.com/auth/facebook/callback"
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # For local testing only
 
