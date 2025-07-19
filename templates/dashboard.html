@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        html, body {
+            width: 100vw;
+            overflow-x: hidden;
+        }
+        body {
+            background: linear-gradient(135deg, #23272a 60%, #4fc3f7 100%);
+        }
+        .dashboard-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .dashboard-card {
+            background: #23272a;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px #000a;
+            padding: 2.5rem 2rem 2rem 2rem;
+            max-width: 420px;
+            width: 100%;
+            animation: fadeIn 0.7s;
+            margin-top: 2rem;
+        }
+        .dashboard-card h1 {
+            color: #ffb347;
+            font-size: 2.1rem;
+            text-align: center;
+            margin-bottom: 1.2rem;
+        }
+        .dashboard-card .welcome {
+            color: #4fc3f7;
+            font-size: 1.15rem;
+            text-align: center;
+            margin-bottom: 2.2rem;
+        }
+        .dashboard-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .dashboard-btn {
+            background: linear-gradient(90deg, #4fc3f7, #ffb347);
+            color: #181a1b;
+            border: none;
+            padding: 0.9rem 0;
+            border-radius: 14px;
+            font-size: 1.13rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s, color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px #0003;
+        }
+        .dashboard-btn:hover {
+            background: linear-gradient(90deg, #ffb347, #4fc3f7);
+            color: #23272a;
+            box-shadow: 0 0 16px #4fc3f7;
+        }
+        .dashboard-footer {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+        .dashboard-footer a {
+            color: #4fc3f7;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .dashboard-footer a:hover {
+            color: #ffb347;
+        }
+        @media (max-width: 600px) {
+            html, body {
+                width: 100vw;
+                overflow-x: hidden;
+            }
+            .dashboard-container {
+                min-height: 100vh;
+                padding: 0;
+            }
+            .dashboard-card {
+                padding: 0.7rem 0.3rem 1.2rem 0.3rem !important;
+                max-width: 99vw !important;
+                min-width: 0 !important;
+                border-radius: 10px !important;
+                margin-top: 1rem;
+            }
+            .dashboard-btn {
+                font-size: 1rem !important;
+                padding: 0.7rem 0 !important;
+                border-radius: 10px !important;
+            }
+            .dashboard-card h1 {
+                font-size: 1.2rem !important;
+            }
+            .dashboard-card .welcome {
+                font-size: 0.98rem !important;
+            }
+            .dashboard-footer {
+                margin-top: 1.2rem;
+                font-size: 0.98rem;
+            }
+        }
+        /* Loader styles */
+        #loader-overlay {
+            position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(30,32,36,0.7); display: flex; align-items: center; justify-content: center; display: none;
+        }
+        .loader-spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #ffb347;
+            border-radius: 50%;
+            width: 60px; height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <!-- Loader Overlay -->
+    <div id="loader-overlay">
+      <div class="loader-spinner"></div>
+    </div>
+    <div class="dashboard-container">
+        <div class="dashboard-card">
+            <h1><i class="fa-solid fa-gauge-high"></i> Dashboard</h1>
+            <div class="welcome">
+                Welcome, <b>{{ username }}</b>!<br>
+                You are successfully logged in.<br>
+            </div>
+            {% if metamask %}
+            <div style="margin:1.5rem 0 2rem 0; text-align:center;">
+                <div style="color:#4fc3f7;font-size:1.1rem;">MetaMask: <b>{{ metamask }}</b></div>
+                <div style="color:#ffb347;font-size:1.1rem;">Balance: <b>{{ metamask_balance }} ETH</b></div>
+            </div>
+            {% endif %}
+            <div class="dashboard-actions">
+                <a href="/create_election"><button class="dashboard-btn"><i class="fa-solid fa-plus"></i> Create Election</button></a>
+                <a href="/my_elections"><button class="dashboard-btn"><i class="fa-solid fa-link"></i> My Election Links</button></a>
+                <a href="/vote_now"><button class="dashboard-btn"><i class="fa-solid fa-vote-yea"></i> Vote Now</button></a>
+                <a href="/voting_history"><button class="dashboard-btn"><i class="fa-solid fa-history"></i> History</button></a>
+            </div>
+        </div>
+        <div class="dashboard-footer">
+            <a href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+            &nbsp;|&nbsp;
+            <a href="/delete_account" style="color:#ff4f4f;"><i class="fa-solid fa-user-xmark"></i> Delete Account</a>
+        </div>
+    </div>
+    <script src="/static/js/metamask.js"></script>
+    <script>
+    function showLoader() {
+      document.getElementById('loader-overlay').style.display = 'flex';
+    }
+    function hideLoader() {
+      document.getElementById('loader-overlay').style.display = 'none';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('form').forEach(function(form) {
+        form.addEventListener('submit', function() {
+          showLoader();
+        });
+      });
+    });
+    </script>
+</body>
+</html> 

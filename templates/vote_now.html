@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Now</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        html, body { width: 100vw; overflow-x: hidden; }
+        .center-box { min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #23272a 60%, #4fc3f7 100%); }
+        .card { background: #23272a; border-radius: 24px; box-shadow: 0 8px 32px #000a; padding: 2.5rem 2rem 2rem 2rem; max-width: 420px; width: 100%; animation: fadeIn 0.7s; }
+        .card h1 { color: #ffb347; font-size: 2rem; text-align: center; margin-bottom: 1.2rem; }
+        .option-list { margin: 1.2rem 0; }
+        .option-radio { display: flex; align-items: center; margin-bottom: 0.7rem; }
+        .option-radio input[type=radio] { accent-color: #4fc3f7; margin-right: 0.7rem; }
+        .option-radio label { color: #4fc3f7; font-size: 1.08rem; }
+        .vote-btn { width: 100%; background: #4fc3f7; color: #23272a; border: none; border-radius: 16px; padding: 0.7rem 0; font-weight: 600; font-size: 1.1rem; margin-top: 1rem; transition: background 0.2s; }
+        .vote-btn:hover { background: #ffb347; color: #23272a; }
+        .results { margin-top: 1.5rem; }
+        .result-bar { background: #2c2f34; border-radius: 8px; margin-bottom: 0.7rem; overflow: hidden; }
+        .result-fill { background: #4fc3f7; height: 1.1rem; color: #23272a; font-weight: 600; padding-left: 0.5rem; border-radius: 8px 0 0 8px; display: flex; align-items: center; }
+        .result-label { color: #fff; font-size: 1.02rem; margin-bottom: 0.2rem; }
+        .info { color: #4fc3f7; text-align: center; font-size: 1.1rem; margin-bottom: 1.5rem; }
+        .election-link { color: #4fc3f7; text-decoration: underline; }
+        .back-link { text-align: center; margin-top: 2rem; }
+        .receipt-box { background: #181a1b; border-radius: 12px; padding: 1.2rem; margin: 1.5rem 0; color: #fff; text-align: center; box-shadow: 0 2px 8px #0005; }
+        .receipt-id { color: #4fc3f7; font-size: 1.1rem; word-break: break-all; }
+        .download-btn { background: #4fc3f7; color: #23272a; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 600; font-size: 1rem; margin-top: 1rem; cursor: pointer; transition: background 0.2s; }
+        .download-btn:hover { background: #ffb347; color: #23272a; }
+        @media (max-width: 600px) {
+            html, body { width: 100vw; overflow-x: hidden; }
+            .center-box { padding: 0; }
+            .card {
+                padding: 0.7rem 0.3rem 1.2rem 0.3rem !important;
+                max-width: 99vw !important;
+                min-width: 0 !important;
+                border-radius: 10px !important;
+            }
+            .card h1 {
+                font-size: 1.2rem !important;
+            }
+            .option-list, .results, .receipt-box {
+                font-size: 0.98rem !important;
+            }
+            .vote-btn, .download-btn {
+                font-size: 1rem !important;
+                padding: 0.7rem 0 !important;
+                border-radius: 10px !important;
+            }
+            input, button, select, textarea {
+                font-size: 1rem !important;
+            }
+            .back-link { font-size: 0.98rem; }
+        }
+        /* Loader styles */
+        #loader-overlay {
+            position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(30,32,36,0.7); display: flex; align-items: center; justify-content: center; display: none;
+        }
+        .loader-spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #ffb347;
+            border-radius: 50%;
+            width: 60px; height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <!-- Loader Overlay -->
+    <div id="loader-overlay">
+      <div class="loader-spinner"></div>
+    </div>
+    <div class="center-box">
+        <div class="card">
+            {% if election %}
+                <h1><i class="fa-solid fa-vote-yea"></i> {{ election.name }}</h1>
+                <div style="color:#aaa; font-size:0.98rem; margin-bottom:0.7rem;">End: {{ election.end_time or 'No end time' }}</div>
+                {% if ended %}
+                    <div class="info">This election has ended.</div>
+                {% elif has_voted %}
+                    <div class="info">You have already voted in this election.</div>
+                {% endif %}
+                {% if vote_receipt %}
+                <div class="receipt-box">
+                    <div style="font-size:1.15rem; color:#ffb347; margin-bottom:0.7rem;"><i class="fa-solid fa-receipt"></i> Vote Receipt</div>
+                    <div class="receipt-id">{{ vote_receipt }}</div>
+                    <button class="download-btn" onclick="downloadReceipt()"><i class="fa-solid fa-download"></i> Download Receipt</button>
+                    <div style="color:#aaa; font-size:0.9rem; margin-top:0.7rem;">Keep this receipt as proof of your vote.</div>
+                </div>
+                <script>
+                function downloadReceipt() {
+                    var text = `Vote Receipt\n---------------------\nReceipt ID: {{ vote_receipt }}\nElection: {{ election.name }}\nYour Vote: {{ vote_receipt_data.split('|')[2] if vote_receipt_data else '' }}\nElection ID: {{ election.id }}\nTimestamp: {{ vote_receipt_data.split('|')[3] if vote_receipt_data else '' }}`;
+                    var blob = new Blob([text], {type: 'text/plain'});
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'vote_receipt.txt';
+                    link.click();
+                }
+                </script>
+                {% endif %}
+                {% if not ended and not has_voted %}
+                <form method="post">
+                    <div class="option-list">
+                        {% for comp in election.competitors %}
+                        <div class="option-radio">
+                            <input type="radio" id="opt{{ loop.index }}" name="option" value="{{ comp.name }}" required>
+                            <label for="opt{{ loop.index }}">{{ comp.name }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="vote-btn"><i class="fa-solid fa-check"></i> Submit Vote</button>
+                </form>
+                {% endif %}
+                <div class="results">
+                    <div style="color:#ffb347; font-weight:600; margin-bottom:0.5rem;">Results</div>
+                    {% for comp in election.competitors %}
+                        <div class="result-label">{{ comp.name }} ({{ results[comp.name] }} vote{{ results[comp.name] != 1 and 's' or '' }})</div>
+                        <div class="result-bar">
+                            <div class="result-fill" style="width: {{ (results[comp.name]/total_votes*100 if total_votes else 0)|round(1) }}%; min-width:2rem;">{{ (results[comp.name]/total_votes*100 if total_votes else 0)|round(1) }}%</div>
+                        </div>
+                    {% endfor %}
+                    <div style="color:#aaa; font-size:0.95rem; margin-top:0.5rem;">Total votes: {{ total_votes }}</div>
+                </div>
+                {% if show_voters and election.votes %}
+                <div style="margin-top:1.5rem;">
+                    <div style="color:#ffb347; font-weight:600; margin-bottom:0.7rem;">Voters</div>
+                    <div style="background:#2c2f34; border-radius:12px; padding:1rem; max-height:200px; overflow-y:auto;">
+                        {% for voter, vote_choice in election.votes.items() %}
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; padding:0.5rem; background:#23272a; border-radius:8px;">
+                            <div>
+                                <span style="color:#4fc3f7; font-weight:600;">{{ voter }}</span>
+                                <span style="color:#aaa; font-size:0.9rem;"> → {{ vote_choice }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                {% if election.status == 'active' and is_creator %}
+                <form method="post" action="/stop_election/{{ election.id }}" style="margin-top:1.2rem; text-align:center;">
+                    <button type="submit" style="background:#ffb347; color:#23272a; border:none; border-radius:12px; padding:0.6rem 1.5rem; font-weight:600; font-size:1.08rem; cursor:pointer;">Stop Election</button>
+                </form>
+                {% endif %}
+                <div class="back-link"><a href="/election/{{ election.id }}">Back to Election</a></div>
+            {% elif available is defined %}
+                <h1><i class="fa-solid fa-vote-yea"></i> Vote Now</h1>
+                {% if available|length == 0 %}
+                    <div class="info">No elections available for you to vote in right now.</div>
+                {% else %}
+                    <div class="info">Select an election to vote in:</div>
+                    <ul style="padding-left:0; list-style:none;">
+                        {% for e in available %}
+                        <li style="margin-bottom:1.2rem;">
+                            <a class="election-link" href="/vote_now?election_id={{ e.id }}">{{ e.name }}</a>
+                            <div style="color:#aaa; font-size:0.95rem;">Ends: {{ e.end_time or 'No end time' }}</div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="back-link"><a href="/dashboard">Back to Dashboard</a></div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+    function showLoader() {
+      document.getElementById('loader-overlay').style.display = 'flex';
+    }
+    function hideLoader() {
+      document.getElementById('loader-overlay').style.display = 'none';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('form').forEach(function(form) {
+        form.addEventListener('submit', function() {
+          showLoader();
+        });
+      });
+    });
+    </script>
+</body>
+</html> 

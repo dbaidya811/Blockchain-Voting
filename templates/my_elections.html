@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Election Links</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        html, body { width: 100vw; overflow-x: hidden; }
+        .center-box { min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #23272a 60%, #4fc3f7 100%); }
+        .card { background: #23272a; border-radius: 24px; box-shadow: 0 8px 32px #000a; padding: 2.5rem 2rem 2rem 2rem; max-width: 420px; width: 100%; animation: fadeIn 0.7s; }
+        .card h1 { color: #ffb347; font-size: 2rem; text-align: center; margin-bottom: 1.2rem; }
+        .card .info { color: #4fc3f7; text-align: center; font-size: 1.1rem; margin-bottom: 1.5rem; }
+        .back-link { text-align: center; margin-top: 2rem; }
+        .voters-scroll-box { background:#181a1b; border-radius:8px; padding:0.8rem; max-height:150px; min-height:60px; overflow-y:auto; transition: box-shadow 0.2s; }
+        .voter-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem; padding:0.4rem; background:#23272a; border-radius:6px; }
+        @media (max-width: 600px) {
+            html, body { width: 100vw; overflow-x: hidden; }
+            .center-box { padding: 0; }
+            .card {
+                padding: 0.7rem 0.3rem 1.2rem 0.3rem !important;
+                max-width: 99vw !important;
+                min-width: 0 !important;
+                border-radius: 10px !important;
+            }
+            .card h1 {
+                font-size: 1.2rem !important;
+            }
+            .voters-scroll-box {
+                font-size: 0.98rem !important;
+                max-height: 120px !important;
+            }
+            .voter-row {
+                font-size: 0.98rem !important;
+                padding: 0.3rem !important;
+            }
+            input, button, select, textarea {
+                font-size: 1rem !important;
+            }
+            .back-link { font-size: 0.98rem; }
+        }
+        /* Loader styles */
+        #loader-overlay {
+            position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(30,32,36,0.7); display: flex; align-items: center; justify-content: center; display: none;
+        }
+        .loader-spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #ffb347;
+            border-radius: 50%;
+            width: 60px; height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <!-- Loader Overlay -->
+    <div id="loader-overlay">
+      <div class="loader-spinner"></div>
+    </div>
+    <div class="center-box">
+        <div class="card">
+            <h1><i class="fa-solid fa-link"></i> My Election Links</h1>
+            {% if elections and elections|length > 0 %}
+            <div style="margin-bottom:1.5rem; color:#fff; text-align:center;">You have created {{ elections|length }} election{{ elections|length > 1 and 's' or '' }}.</div>
+            <div style="display:flex; flex-direction:column; gap:1.2rem;">
+                {% for election in elections %}
+                <div style="background:#2c2f34; border-radius:16px; padding:1.2rem 1rem; box-shadow:0 2px 8px #0005;">
+                    <div style="font-size:1.15rem; color:#ffb347; font-weight:600;">{{ election.name }}</div>
+                    <div style="color:#4fc3f7; font-size:0.98rem; margin:0.2rem 0 0.5rem 0;">
+                        Competitors: {{ election.competitors|map(attribute='name')|join(', ') }}
+                    </div>
+                    <div style="color:#aaa; font-size:0.93rem;">End: {{ election.end_time or 'No end time' }}</div>
+                    <div style="color:#aaa; font-size:0.93rem;">Status: {{ election.status|capitalize }}</div>
+                    {% if election.votes %}
+                    <div style="margin-top:0.8rem;">
+                        <div style="color:#ffb347; font-weight:600; font-size:0.95rem; margin-bottom:0.5rem;">Voters ({{ election.votes|length }})</div>
+                        <div class="voters-scroll-box" id="voters-box-{{ election.id }}">
+                            {% for voter, vote_choice in election.votes.items() %}
+                            <div class="voter-row">
+                                <div style="flex:1;">
+                                    <span style="color:#4fc3f7; font-weight:600; font-size:0.9rem;">{{ voter }}</span>
+                                    <span style="color:#aaa; font-size:0.85rem;"> → {{ vote_choice }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div style="margin-top:0.8rem; color:#aaa; font-size:0.9rem;">No votes yet</div>
+                    {% endif %}
+                    <div style="margin-top:0.8rem; display:flex; flex-direction:column; gap:0.5rem;">
+                        <a href="/election/{{ election.id }}" style="color:#4fc3f7; text-decoration:underline;">View Election</a>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <input type="text" id="link-{{ election.id }}" value="{{ request.host_url }}vote_now?election_id={{ election.id }}" readonly style="flex:2; border-radius:8px; padding:0.3rem 0.5rem; font-size:0.95rem; background:#181a1b; color:#fff; border:none;">
+                            <button type="button" onclick="copyLink('{{ election.id }}')" style="background:#4fc3f7; color:#23272a; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-weight:600; cursor:pointer;">Share</button>
+                        </div>
+                        <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+                            {% if election.status == 'active' %}
+                            <form method="post" action="/stop_election/{{ election.id }}" style="flex:1;">
+                                <button type="submit" style="width:100%; background:#ffb347; color:#23272a; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-weight:600; cursor:pointer; font-size:0.9rem;">
+                                    <i class="fa-solid fa-pause"></i> Stop Election
+                                </button>
+                            </form>
+                            {% endif %}
+                            <form method="post" action="/delete_election/{{ election.id }}" style="flex:1;" onsubmit="return confirm('Are you sure you want to delete this election? This action cannot be undone.')">
+                                <button type="submit" style="width:100%; background:#ff6b6b; color:#fff; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-weight:600; cursor:pointer; font-size:0.9rem;">
+                                    <i class="fa-solid fa-trash"></i> Delete Election
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="info">You haven't created any elections yet.</div>
+            {% endif %}
+            <div class="back-link"><a href="/dashboard">Back to Dashboard</a></div>
+        </div>
+    </div>
+    <script>
+    function copyLink(electionId) {
+        var copyText = document.getElementById('link-' + electionId);
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        alert('Link copied!');
+    }
+    // Auto-scroll for all voters boxes
+    document.addEventListener('DOMContentLoaded', function() {
+        const boxes = document.querySelectorAll('.voters-scroll-box');
+        boxes.forEach(function(box) {
+            let autoScroll = true;
+            let direction = 1; // 1 = down, -1 = up
+            let scrollStep = 1; // px per frame
+            let delay = 30; // ms per frame
+            let pauseTime = 1200; // ms to pause at top/bottom
+            let pause = false;
+            let lastScrollTop = 0;
+            let pauseTimeout = null;
+            box.addEventListener('wheel', function() { autoScroll = false; });
+            box.addEventListener('touchstart', function() { autoScroll = false; });
+            function scrollBox() {
+                if (!autoScroll) return;
+                if (pause) return;
+                if (direction === 1) {
+                    if (box.scrollTop + box.clientHeight < box.scrollHeight) {
+                        box.scrollTop += scrollStep;
+                    } else {
+                        pause = true;
+                        pauseTimeout = setTimeout(function() { pause = false; direction = -1; }, pauseTime);
+                    }
+                } else {
+                    if (box.scrollTop > 0) {
+                        box.scrollTop -= scrollStep;
+                    } else {
+                        pause = true;
+                        pauseTimeout = setTimeout(function() { pause = false; direction = 1; }, pauseTime);
+                    }
+                }
+                if (autoScroll) requestAnimationFrame(scrollBox);
+            }
+            // Start auto-scroll if content is scrollable
+            if (box.scrollHeight > box.clientHeight) {
+                setTimeout(scrollBox, 1000);
+            }
+        });
+        // Loader for all forms
+        document.querySelectorAll('form').forEach(function(form) {
+            form.addEventListener('submit', function() {
+                showLoader();
+            });
+        });
+    });
+    function showLoader() {
+      document.getElementById('loader-overlay').style.display = 'flex';
+    }
+    function hideLoader() {
+      document.getElementById('loader-overlay').style.display = 'none';
+    }
+    </script>
+</body>
+</html> 

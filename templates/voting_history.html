@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voting History</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .center-box { min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #23272a 60%, #4fc3f7 100%); }
+        .card { background: #23272a; border-radius: 24px; box-shadow: 0 8px 32px #000a; padding: 2.5rem 2rem 2rem 2rem; max-width: 480px; width: 100%; animation: fadeIn 0.7s; }
+        .card h1 { color: #ffb347; font-size: 2rem; text-align: center; margin-bottom: 1.2rem; }
+        .info { color: #4fc3f7; text-align: center; font-size: 1.1rem; margin-bottom: 1.5rem; }
+        .back-link { text-align: center; margin-top: 2rem; }
+        .history-item { background: #2c2f34; border-radius: 16px; padding: 1.2rem; margin-bottom: 1rem; box-shadow: 0 2px 8px #0005; }
+        .election-name { color: #ffb347; font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .vote-details { color: #4fc3f7; font-size: 1rem; margin-bottom: 0.3rem; }
+        .vote-date { color: #aaa; font-size: 0.9rem; }
+        .election-status { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; }
+        .status-active { background: #4fc3f7; color: #23272a; }
+        .status-ended { background: #ff6b6b; color: #fff; }
+        .competitors-list { color: #aaa; font-size: 0.9rem; margin-top: 0.5rem; }
+        .total-votes { color: #ffb347; font-size: 0.9rem; font-weight: 600; margin-top: 0.3rem; }
+    </style>
+</head>
+<body>
+    <div class="center-box">
+        <div class="card">
+            <h1><i class="fa-solid fa-history"></i> Voting History</h1>
+            {% if voting_history and voting_history|length > 0 %}
+                <div style="margin-bottom:1.5rem; color:#fff; text-align:center;">You have voted in {{ voting_history|length }} election{{ voting_history|length > 1 and 's' or '' }}.</div>
+                <div style="max-height:400px; overflow-y:auto;">
+                    {% for item in voting_history %}
+                    <div class="history-item">
+                        <div class="election-name">{{ item.election.name }}</div>
+                        <div class="vote-details">
+                            <i class="fa-solid fa-check-circle"></i> Your Vote: <strong>{{ item.user_vote }}</strong>
+                        </div>
+                        <div class="vote-date">
+                            <i class="fa-solid fa-calendar"></i> Voted on: {{ item.voted_at }}
+                        </div>
+                        <div class="competitors-list">
+                            <i class="fa-solid fa-users"></i> Options: {{ item.election.competitors|map(attribute='name')|join(', ') }}
+                        </div>
+                        <div class="total-votes">
+                            <i class="fa-solid fa-chart-bar"></i> Total Votes: {{ item.election.votes|length }}
+                        </div>
+                        <div class="election-status status-{{ item.election.status }}">
+                            {{ item.election.status|capitalize }}
+                        </div>
+                        {% if item.election.end_time %}
+                        <div style="color:#aaa; font-size:0.85rem; margin-top:0.3rem;">
+                            <i class="fa-solid fa-clock"></i> End: {{ item.election.end_time }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="info">You haven't voted in any elections yet.</div>
+                <div style="text-align:center; margin-top:1rem;">
+                    <a href="/vote_now" style="color:#4fc3f7; text-decoration:underline;">
+                        <i class="fa-solid fa-vote-yea"></i> Start Voting
+                    </a>
+                </div>
+            {% endif %}
+            <div class="back-link"><a href="/dashboard">Back to Dashboard</a></div>
+        </div>
+    </div>
+</body>
+</html> 

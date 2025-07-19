@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forgot Password</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .center-box {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #23272a 60%, #4fc3f7 100%);
+        }
+        .forgot-card {
+            background: #23272a;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px #000a;
+            padding: 2.5rem 1.2rem 2rem 1.2rem;
+            width: 100%;
+            max-width: 370px;
+            animation: fadeIn 0.7s;
+        }
+        .forgot-card h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #ffb347;
+            font-size: 2rem;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4fc3f7;
+            font-size: 1.1rem;
+        }
+        .input-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.85rem 0.7rem 0.85rem 2.7rem;
+            border-radius: 14px;
+            border: none;
+            background: #23272a;
+            color: #f1f1f1;
+            font-size: 1.08rem;
+            box-shadow: 0 2px 8px #0002;
+            transition: box-shadow 0.2s, background 0.2s;
+            outline: 1.5px solid #23272a;
+        }
+        .input-group input:focus {
+            outline: 2px solid #4fc3f7;
+            background: #181a1b;
+            box-shadow: 0 0 12px #4fc3f7;
+        }
+        .forgot-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #4fc3f7, #ffb347);
+            color: #181a1b;
+            border: none;
+            padding: 0.9rem 0;
+            border-radius: 14px;
+            font-size: 1.13rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: background 0.3s, color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px #0003;
+        }
+        .forgot-btn:hover {
+            background: linear-gradient(90deg, #ffb347, #4fc3f7);
+            color: #23272a;
+            box-shadow: 0 0 16px #4fc3f7;
+        }
+        .forgot-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .forgot-footer a {
+            color: #4fc3f7;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .forgot-footer a:hover {
+            color: #ffb347;
+        }
+    </style>
+</head>
+<body>
+    <div class="center-box">
+        <form class="forgot-card" method="post">
+            <h1><i class="fa-solid fa-key"></i> Forgot Password</h1>
+            <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" name="email" placeholder="Enter your email" required autocomplete="email">
+            </div>
+            <input class="forgot-btn" type="submit" value="Send OTP">
+            <div class="forgot-footer">
+                <a href="/login">Back to Login</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html> 
