@@ -15,19 +15,16 @@ app.secret_key = 'supersecretkey'  # For session management and flash messages
 USERS_FILE = 'data/users.json'
 ELECTIONS_FILE = 'data/elections.json'
 
-GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
-if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
-    raise RuntimeError("Google OAuth credentials not set in environment variables.")
-GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
-REDIRECT_URI = "http://voting-system-kd9y.onrender.com/auth/google/callback"
-
+GOOGLE_CLIENT_ID = "529170702607-m69gq0vt2k7bnrb44fsfgdmrvi12868k.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET = "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"
 FACEBOOK_CLIENT_ID = "1053147023660486"
 FACEBOOK_CLIENT_SECRET = "b29262386d08c2cb4779d158502427c8"
+GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
+REDIRECT_URI = "http://localhost:5000/auth/google/callback"
 FACEBOOK_AUTHORIZATION_BASE_URL = "https://www.facebook.com/v17.0/dialog/oauth"
 FACEBOOK_TOKEN_URL = "https://graph.facebook.com/v17.0/oauth/access_token"
 FACEBOOK_USERINFO_URL = "https://graph.facebook.com/me?fields=id,name,email"
-FACEBOOK_REDIRECT_URI = "http://voting-system-kd9y.onrender.com/auth/facebook/callback"
+FACEBOOK_REDIRECT_URI = "http://localhost:5000/auth/facebook/callback"
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # For local testing only
 
